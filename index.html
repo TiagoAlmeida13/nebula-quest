@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nebula Quest — O jogo que nunca existiu (mas devia)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0d0221;
+        --bg2: #150634;
+        --neon-pink: #ff2e97;
+        --neon-cyan: #21e6c1;
+        --neon-yellow: #ffe45e;
+        --neon-purple: #a239ea;
+        --text: #f4f1ff;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "VT323", monospace;
+        font-size: 22px;
+        min-height: 100vh;
+        overflow-x: hidden;
+        position: relative;
+      }
+
+      /* estrelas de fundo */
+      .stars {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        background-image:
+          radial-gradient(2px 2px at 20px 30px, white, transparent),
+          radial-gradient(2px 2px at 140px 80px, white, transparent),
+          radial-gradient(1px 1px at 90px 40px, white, transparent),
+          radial-gradient(1px 1px at 200px 150px, white, transparent),
+          radial-gradient(2px 2px at 260px 60px, white, transparent),
+          radial-gradient(1px 1px at 320px 200px, white, transparent);
+        background-repeat: repeat;
+        background-size: 340px 220px;
+        opacity: 0.4;
+        animation: drift 60s linear infinite;
+      }
+      @keyframes drift {
+        from {
+          background-position: 0 0;
+        }
+        to {
+          background-position: -1000px 500px;
+        }
+      }
+
+      /* scanlines retro */
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 2;
+        pointer-events: none;
+        background: repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.15),
+          rgba(0, 0, 0, 0.15) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+      }
+
+      .wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 24px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .pixel-font {
+        font-family: "Press Start 2P", monospace;
+      }
+
+      nav {
+        padding: 28px 0;
+      }
+      nav .wrap {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .logo {
+        font-family: "Press Start 2P", monospace;
+        font-size: 14px;
+        color: var(--neon-cyan);
+        text-shadow: 0 0 8px var(--neon-cyan);
+      }
+      .navlinks {
+        display: flex;
+        gap: 24px;
+        font-size: 18px;
+      }
+      .navlinks a {
+        color: var(--text);
+        text-decoration: none;
+        opacity: 0.8;
+      }
+      .navlinks a:hover {
+        opacity: 1;
+        color: var(--neon-yellow);
+      }
+
+      /* HERO */
+      .hero {
+        padding: 80px 0 90px;
+        text-align: center;
+      }
+      .badge {
+        display: inline-block;
+        font-family: "Press Start 2P", monospace;
+        font-size: 10px;
+        color: var(--neon-purple);
+        border: 2px solid var(--neon-purple);
+        padding: 8px 14px;
+        margin-bottom: 32px;
+        box-shadow: 0 0 12px rgba(162, 57, 234, 0.5);
+      }
+      .title {
+        font-family: "Press Start 2P", monospace;
+        font-size: clamp(28px, 6vw, 54px);
+        line-height: 1.4;
+        color: var(--neon-pink);
+        text-shadow:
+          0 0 8px var(--neon-pink),
+          0 0 24px rgba(255, 46, 151, 0.5);
+      }
+      .title span {
+        color: var(--neon-cyan);
+        text-shadow:
+          0 0 8px var(--neon-cyan),
+          0 0 24px rgba(33, 230, 193, 0.5);
+      }
+      .subtitle {
+        margin-top: 28px;
+        font-size: 26px;
+        color: var(--text);
+        opacity: 0.85;
+        max-width: 560px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .btnrow {
+        margin-top: 44px;
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .btn {
+        font-family: "Press Start 2P", monospace;
+        font-size: 13px;
+        padding: 18px 28px;
+        border: none;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: transform 0.1s ease;
+        image-rendering: pixelated;
+      }
+      .btn:active {
+        transform: translateY(3px);
+      }
+      .btn.primary {
+        background: var(--neon-yellow);
+        color: var(--bg);
+        box-shadow: 4px 4px 0 var(--neon-pink);
+      }
+      .btn.primary:hover {
+        box-shadow: 6px 6px 0 var(--neon-pink);
+        transform: translate(-2px, -2px);
+      }
+      .btn.ghost {
+        background: transparent;
+        color: var(--neon-cyan);
+        border: 2px solid var(--neon-cyan);
+        box-shadow: 4px 4px 0 rgba(33, 230, 193, 0.4);
+      }
+      .btn.ghost:hover {
+        box-shadow: 6px 6px 0 rgba(33, 230, 193, 0.4);
+        transform: translate(-2px, -2px);
+      }
+
+      /* character strip */
+      .sprite-row {
+        margin-top: 70px;
+        display: flex;
+        justify-content: center;
+        gap: 26px;
+      }
+      .sprite {
+        width: 44px;
+        height: 44px;
+        image-rendering: pixelated;
+        animation: bob 1.6s ease-in-out infinite;
+      }
+      .sprite:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .sprite:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      .sprite:nth-child(4) {
+        animation-delay: 0.6s;
+      }
+      @keyframes bob {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      /* SECTIONS */
+      section {
+        padding: 70px 0;
+      }
+      .sec-title {
+        font-family: "Press Start 2P", monospace;
+        font-size: 22px;
+        color: var(--neon-yellow);
+        text-shadow: 0 0 8px rgba(255, 228, 94, 0.5);
+        text-align: center;
+        margin-bottom: 50px;
+      }
+
+      /* screenshots grid (blocos coloridos, sem imagem real) */
+      .screens {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+      }
+      .screen {
+        aspect-ratio: 16/10;
+        border: 3px solid var(--bg2);
+        position: relative;
+        overflow: hidden;
+        image-rendering: pixelated;
+      }
+      .screen::before {
+        content: attr(data-label);
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        font-family: "Press Start 2P", monospace;
+        font-size: 9px;
+        color: white;
+        text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.6);
+      }
+      .screen.s1 {
+        background:
+          linear-gradient(135deg, #ff2e97 25%, transparent 25%) 0 0/40px 40px,
+          linear-gradient(315deg, #a239ea 25%, transparent 25%) 0 0/40px 40px,
+          var(--bg2);
+      }
+      .screen.s2 {
+        background: repeating-linear-gradient(
+          45deg,
+          #21e6c1 0 10px,
+          #0d0221 10px 20px
+        );
+      }
+      .screen.s3 {
+        background:
+          radial-gradient(
+            circle at 30% 30%,
+            var(--neon-yellow) 0%,
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at 70% 70%,
+            var(--neon-pink) 0%,
+            transparent 40%
+          ),
+          var(--bg2);
+      }
+
+      /* features */
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 24px;
+      }
+      .feature {
+        border: 2px solid var(--bg2);
+        background: rgba(255, 255, 255, 0.02);
+        padding: 26px;
+      }
+      .feature .icon {
+        font-size: 34px;
+        margin-bottom: 14px;
+      }
+      .feature h3 {
+        font-family: "Press Start 2P", monospace;
+        font-size: 13px;
+        color: var(--neon-cyan);
+        margin-bottom: 12px;
+        line-height: 1.6;
+      }
+      .feature p {
+        opacity: 0.8;
+        font-size: 20px;
+        line-height: 1.4;
+      }
+
+      /* CTA final */
+      .cta {
+        text-align: center;
+        border: 2px dashed var(--neon-purple);
+        padding: 50px 30px;
+      }
+      .cta h2 {
+        font-family: "Press Start 2P", monospace;
+        font-size: 20px;
+        color: var(--neon-pink);
+        margin-bottom: 20px;
+        text-shadow: 0 0 8px rgba(255, 46, 151, 0.5);
+      }
+      .cta p {
+        opacity: 0.8;
+        margin-bottom: 30px;
+      }
+
+      footer {
+        text-align: center;
+        padding: 40px 0;
+        font-size: 16px;
+        opacity: 0.5;
+      }
+
+      @media (max-width: 640px) {
+        .navlinks {
+          display: none;
+        }
+        body {
+          font-size: 19px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stars"></div>
+
+    <nav>
+      <div class="wrap">
+        <div class="logo">NEBULA QUEST</div>
+        <div class="navlinks">
+          <a href="#screens">Screenshots</a>
+          <a href="#features">Features</a>
+          <a href="#cta">Jogar</a>
+        </div>
+      </div>
+    </nav>
+
+    <header class="hero">
+      <div class="wrap">
+        <span class="badge pixel-font">✦ EM DESENVOLVIMENTO ✦</span>
+
+        <h1 class="title">NEBULA<br /><span>QUEST</span></h1>
+
+        <p class="subtitle">
+          Pilote sua nave através de 8 galáxias, colete cristais de energia e
+          derrote o Imperador do Vazio. Um platformer espacial 16-bit que nunca
+          saiu do papel — até agora.
+        </p>
+
+        <div class="btnrow">
+          <a href="#cta" class="btn primary">▶ JOGAR AGORA</a>
+          <a href="#screens" class="btn ghost">VER SCREENSHOTS</a>
+        </div>
+
+        <div class="sprite-row">
+          <svg class="sprite" viewBox="0 0 8 8">
+            <rect width="8" height="8" fill="#ff2e97" />
+            <rect x="2" y="2" width="4" height="4" fill="#0d0221" />
+          </svg>
+          <svg class="sprite" viewBox="0 0 8 8">
+            <rect width="8" height="8" fill="#21e6c1" />
+            <rect x="1" y="1" width="2" height="2" fill="#0d0221" />
+            <rect x="5" y="1" width="2" height="2" fill="#0d0221" />
+          </svg>
+          <svg class="sprite" viewBox="0 0 8 8">
+            <rect width="8" height="8" fill="#ffe45e" />
+            <circle cx="4" cy="4" r="2" fill="#0d0221" />
+          </svg>
+          <svg class="sprite" viewBox="0 0 8 8">
+            <rect width="8" height="8" fill="#a239ea" />
+            <rect x="0" y="3" width="8" height="2" fill="#0d0221" />
+          </svg>
+        </div>
+      </div>
+    </header>
+
+    <section id="screens">
+      <div class="wrap">
+        <h2 class="sec-title">SCREENSHOTS</h2>
+        <div class="screens">
+          <div class="screen s1" data-label="GALÁXIA 01"></div>
+          <div class="screen s2" data-label="ZONA DE BOSS"></div>
+          <div class="screen s3" data-label="NEBULOSA FINAL"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="wrap">
+        <h2 class="sec-title">O QUE VOCÊ VAI ENCONTRAR</h2>
+        <div class="features">
+          <div class="feature">
+            <div class="icon">🚀</div>
+            <h3>8 GALÁXIAS</h3>
+            <p>
+              Cada uma com sua própria física de gravidade e paleta de cores
+              neon.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="icon">💎</div>
+            <h3>CRISTAIS DE ENERGIA</h3>
+            <p>
+              Colete pra desbloquear upgrades da nave e novas velocidades de
+              dash.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="icon">👾</div>
+            <h3>7 CHEFÕES</h3>
+            <p>
+              Cada um com um padrão de ataque totalmente diferente pra decorar.
+            </p>
+          </div>
+          <div class="feature">
+            <div class="icon">🎵</div>
+            <h3>TRILHA CHIPTUNE</h3>
+            <p>Uma trilha sonora 100% synth que gruda na cabeça por dias.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cta">
+      <div class="wrap">
+        <div class="cta">
+          <h2>PRONTO PRA DECOLAR?</h2>
+          <p>Nebula Quest existe só nesta página — por enquanto.</p>
+          <a href="#" class="btn primary">▶ INICIAR JOGO</a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="wrap">
+        Nebula Quest © 2026 — projeto fictício de portfólio
+      </div>
+    </footer>
+  </body>
+</html>
